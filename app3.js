@@ -4,7 +4,6 @@ const port = 3000
 const graphqlHTTP = require('express-graphql')
 const { buildSchema } = require('graphql')
 const customer = require('./customer.json')
-const home = require('./home.json')
 
 // app.get('/hello', (req, res) => {
 //     res.json({ data: 'Hello' })
@@ -29,13 +28,11 @@ const home = require('./home.json')
 //         return 'World'
 //     }
 // }
-console.log(home.data)
+
 const schema = buildSchema(`
     type Query {
         customers: [Customer]
         customer(id: ID!): Customer
-        homes: [Home]
-        home(id: ID!): Home
     }
 
     type Customer {
@@ -46,20 +43,14 @@ const schema = buildSchema(`
         gender: String
         ip_address: String
     }
-
-    type Home {
-        id: Int
-        title: String
-        type: String
-        position: Int
-        created_at: String
-    }
 `)
 const resolver = {
-    customers: () => customer,
-    customer: (args) => customer.find(c => c.id == args.id),
-    homes: () => home.data,
-    home: (args) => home.data.find(h => h.id == args.id)
+    customers() {
+        return customer
+    },
+    customer(args) {
+        return customer.find(c => c.id == args.id)
+    }
 }
 
 app.use(graphqlHTTP({
